@@ -1,0 +1,39 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://chaquo.com/maven' }
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath 'com.chaquo.python:gradle:16.0.0'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://chaquo.com/maven' }
+    }
+}
+
+// Đặt thư mục build của root project
+def newBuildDir = rootProject.layout.buildDirectory.dir("../../build").get().asFile
+rootProject.buildDir = newBuildDir
+
+// Đặt thư mục build của các subproject
+subprojects {
+    buildDir = new File(rootProject.buildDir, name)
+}
+
+// Đảm bảo subprojects phụ thuộc đánh giá project app
+subprojects {
+    evaluationDependsOn(":app")
+}
+
+// Đăng ký task clean
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
